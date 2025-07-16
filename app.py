@@ -47,9 +47,8 @@ def align_rows(data):
         rows.append(row)
     return rows
 
-def process_pdf(pdf_path):
-    # Convert PDF → images
-    def pdf_to_images(pdf_path):
+def pdf_to_images(pdf_path):
+    """Convert PDF into a list of PIL images using pypdfium2"""
     pdf = pypdfium2.PdfDocument(pdf_path)
     images = []
     for page_num in range(len(pdf)):
@@ -59,13 +58,17 @@ def process_pdf(pdf_path):
         images.append(img)
     return images
 
-images = pdf_to_images("uploaded.pdf")
-    all_text = ""
+def process_pdf(pdf_path):
+    # Convert PDF to images
+    images = pdf_to_images(pdf_path)
 
+    all_text = ""
     for img in images:
         pixel_values = processor(img, return_tensors="pt").pixel_values.to(device)
         task_prompt = "<s_docvqa><s_question>extract all text<s_answer>"
-        decoder_input_ids = processor.tokenizer(task_prompt, add_special_tokens=False, return_tensors="pt").input_ids.to(device)
+        decoder_input_ids = processor.tokenizer(
+            task_prompt, add_special_tokens=False, return_tensors="pt"
+        ).input_ids.to(device)
 
         outputs = model.generate(
             pixel_values,
