@@ -1,6 +1,9 @@
-torch
-transformers
+torch>=2.0.0
+torchvision
+torchaudio
+transformers>=4.37.0
+accelerate>=0.21.0
+sentencepiece
+Pillow
 streamlit
-pdf2image
-pillow
-pandas
+pypdfium2   # (optional for PDF to image without poppler)
