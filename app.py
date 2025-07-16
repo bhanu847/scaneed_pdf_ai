@@ -1,6 +1,6 @@
 import torch
 from transformers import DonutProcessor, VisionEncoderDecoderModel
-from pdf2image import convert_from_path
+import pypdfium2
 import pandas as pd
 import re
 import streamlit as st
@@ -49,7 +49,17 @@ def align_rows(data):
 
 def process_pdf(pdf_path):
     # Convert PDF → images
-    images = convert_from_path(pdf_path)
+    def pdf_to_images(pdf_path):
+    pdf = pypdfium2.PdfDocument(pdf_path)
+    images = []
+    for page_num in range(len(pdf)):
+        page = pdf[page_num]
+        bitmap = page.render(scale=2)  # 2x resolution
+        img = bitmap.to_pil()  # Convert to PIL Image
+        images.append(img)
+    return images
+
+images = pdf_to_images("uploaded.pdf")
     all_text = ""
 
     for img in images:
